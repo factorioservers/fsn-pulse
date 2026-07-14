@@ -28,7 +28,7 @@ fi
 CONTAINER="fsn-pulse-smoke"
 RCON_PORT="${RCON_PORT:-27015}"
 RCON_PW="fsn-pulse-smoke"
-CONTRACT_RE='^FSN-PULSE v1 tick=[0-9]+ speed=[0-9.eE+-]+ paused=(true|false)$'
+CONTRACT_RE='^FSN-PULSE v2 tick=[0-9]+ speed=[0-9.eE+-]+ paused=(true|false) players=[0-9]+$'
 
 ./scripts/package.sh
 VERSION=$(python3 -c 'import json; print(json.load(open("info.json"))["version"])')

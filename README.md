@@ -34,39 +34,51 @@ On load, `control.lua` registers the `/fsn-pulse` command. When invoked, it
 prints one line via `rcon.print` (and echoes the same line to you if you run
 it as a player in-game, so you can see exactly what gets reported).
 
-### Output contract (v1)
+### Output contract (v2)
 
 This line is a versioned contract consumed by the FactorioServers.com sampler.
-Format changes will bump the version token (`v1`), never silently change it.
+Format changes will bump the version token (`v2`), never silently change it.
 
 ```
-FSN-PULSE v1 tick=<uint> speed=<number> paused=<true|false>
+FSN-PULSE v2 tick=<uint> speed=<number> paused=<true|false> players=<uint>
 ```
 
-| Field    | Source             | Meaning                                                        |
-| -------- | ------------------ | -------------------------------------------------------------- |
-| `tick`   | `game.tick`        | Current map tick (integer, monotonically increasing at 60/s at speed 1.0 when not paused) |
-| `speed`  | `game.speed`       | Configured game-speed multiplier (`1` = normal; formatted with `%.6g`, so e.g. `1`, `0.5`) |
-| `paused` | `game.tick_paused` | Whether entity update is paused (`true`/`false`)                |
+| Field     | Source                    | Meaning                                                       |
+| --------- | ------------------------- | ------------------------------------------------------------- |
+| `tick`    | `game.tick`               | Current map tick (integer, monotonically increasing at 60/s at speed 1.0 when not paused) |
+| `speed`   | `game.speed`              | Configured game-speed multiplier (`1` = normal; formatted with `%.6g`, so e.g. `1`, `0.5`) |
+| `paused`  | `game.tick_paused`        | Whether the explicit tick-pause flag is set (`true`/`false`) — see the warning below |
+| `players` | `#game.connected_players` | Number of players currently online                             |
 
 Example:
 
 ```
-FSN-PULSE v1 tick=123456 speed=1 paused=false
+FSN-PULSE v2 tick=123456 speed=1 paused=false players=3
 ```
 
-Parsers should anchor on the `FSN-PULSE v1 ` prefix and treat the rest as
-space-separated `key=value` pairs; unknown extra pairs in future `v1.x`
-outputs must be ignored. Note that a server may stop advancing ticks for
-reasons not reflected in `paused` (e.g. headless auto-pause with no players
-connected), so samplers should treat Δtick = 0 as "not running", whatever
-`paused` says.
+**⚠️ `paused` does NOT detect auto-pause.** It reflects only the explicit
+`game.tick_paused` flag. A headless server that auto-pauses because it is
+empty keeps reporting `paused=false` while the tick is frozen — verified
+against production servers. Consumers must never treat `paused=false` as
+"the simulation is advancing". That is what `players` is for: the
+authoritative idle rule is **Δtick ≈ 0 AND `players=0` → idle/paused
+sample, not a UPS dip**. Applying that rule is the consumer's job.
+
+Parsers should anchor on the `FSN-PULSE v2 ` prefix and treat the rest as
+space-separated `key=value` pairs; unknown extra pairs in future `v2.x`
+outputs must be ignored.
+
+**v1 is superseded.** Mod releases up to 1.0.1 emitted
+`FSN-PULSE v1 tick=... speed=... paused=...` (no `players` field). From 1.1.0
+the command emits only the v2 line — nothing a parser keyed on the
+`FSN-PULSE v1 ` prefix will accept. This is a deliberate clean break on the
+version token.
 
 ## What it deliberately does NOT do
 
 - **No event handlers.** No `on_tick`, no `script.on_event` of any kind.
   Zero per-tick cost; the mod consumes CPU only in the instant the command runs.
-- **No game-state mutation.** It only reads three values.
+- **No game-state mutation.** It only reads four values.
 - **No global/persistent state.** Nothing is stored in the save file.
 - **No UI, no gameplay changes, no prototypes.** There is no `data.lua`.
 - **No telemetry or data collection.** The mod never sends anything anywhere;

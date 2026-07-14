@@ -1,11 +1,11 @@
 {
   "name": "fsn-pulse",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "title": "FSN Pulse — server performance monitor (by FactorioServers.com)",
   "author": "FactorioServers.com (Cinder Logic LLC)",
   "contact": "https://factorioservers.com",
   "homepage": "https://factorioservers.com",
-  "description": "Registers a single achievement-safe console command, /fsn-pulse, that reports the server's current tick, speed, and pause state over RCON so FactorioServers.com can graph UPS. No event handlers, no gameplay changes, no data collection. Fully auditable: https://github.com/factorioservers/fsn-pulse",
+  "description": "Registers a single achievement-safe console command, /fsn-pulse, that reports the server's current tick, speed, pause state, and player count over RCON so FactorioServers.com can graph UPS. No event handlers, no gameplay changes, no data collection. Fully auditable: https://github.com/factorioservers/fsn-pulse",
   "factorio_version": "2.0",
   "dependencies": ["base >= 2.0"]
 }

@@ -7,14 +7,19 @@
 -- Output contract (parsed by the FactorioServers.com control plane —
 -- see README.md before changing anything here):
 --
---   FSN-PULSE v1 tick=<uint> speed=<number> paused=<true|false>
+--   FSN-PULSE v2 tick=<uint> speed=<number> paused=<true|false> players=<uint>
+--
+-- Note: paused is game.tick_paused, which does NOT reflect the server's
+-- auto-pause-when-empty. players exists so consumers can classify a frozen
+-- tick on an empty server as idle rather than a UPS collapse.
 
 local function pulse(command)
   local line = string.format(
-    "FSN-PULSE v1 tick=%d speed=%.6g paused=%s",
+    "FSN-PULSE v2 tick=%d speed=%.6g paused=%s players=%d",
     game.tick,
     game.speed,
-    tostring(game.tick_paused)
+    tostring(game.tick_paused),
+    #game.connected_players
   )
 
   -- Reaches the RCON caller when invoked over RCON; no-op otherwise.

@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.0
+Date: 2026-07-14
+  Changes:
+    - Output line format bumped to v2: adds players=<count of connected players>
+      so consumers can tell an idle (auto-paused) server from a UPS collapse.
+      The paused field reflects only game.tick_paused, which does not detect
+      auto-pause-when-empty; see the README's output-contract section.
+---------------------------------------------------------------------------------------------------
 Version: 1.0.1
 Date: 2026-07-14
   Graphics:

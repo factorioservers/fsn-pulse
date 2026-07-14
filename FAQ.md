@@ -6,11 +6,12 @@ technical details is the [README](https://github.com/factorioservers/fsn-pulse).
 ## What does this mod actually do?
 
 It registers exactly one console command, `/fsn-pulse`. When the command is
-run, the mod prints one line of text with three values the game already knows:
-the current tick, the game speed, and whether the tick is paused:
+run, the mod prints one line of text with four values the game already knows:
+the current tick, the game speed, whether the tick is paused, and how many
+players are online:
 
 ```
-FSN-PULSE v1 tick=123456 speed=1 paused=false
+FSN-PULSE v2 tick=123456 speed=1 paused=false players=3
 ```
 
 That's the whole mod. There is no other code path. It adds no event handlers
@@ -53,7 +54,7 @@ to you.
 
 No. Because there are no event handlers, the mod consumes zero CPU during
 normal play — code only runs in the instant the command is invoked, and that
-code reads three values and formats a string.
+code reads four values and formats a string.
 
 ## Can I remove it?
 
@@ -64,11 +65,12 @@ will simply stop updating.
 ## Can I use it for my own monitoring?
 
 Yes — MIT licensed. Install the mod, then call `/fsn-pulse` over RCON from
-your own tooling. Anchor your parser on the `FSN-PULSE v1 ` prefix and treat
+your own tooling. Anchor your parser on the `FSN-PULSE v2 ` prefix and treat
 the rest as space-separated `key=value` pairs, ignoring unknown keys. Compute
 UPS as Δtick / Δseconds between two samples. Note: a headless server with no
-players connected auto-pauses without setting `paused=true`, so treat
-Δtick = 0 as "not running" regardless of the `paused` field.
+players connected auto-pauses without setting `paused=true` (that field only
+reflects the explicit tick-pause flag), so classify Δtick ≈ 0 with
+`players=0` as "idle", not as a performance problem.
 
 ## Does it work on Factorio 1.1?
 
