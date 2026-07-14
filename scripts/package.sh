@@ -15,7 +15,7 @@ PKG="${NAME}_${VERSION}"
 rm -rf "build/${PKG}" "dist/${PKG}.zip"
 mkdir -p "build/${PKG}" dist
 
-cp info.json control.lua changelog.txt LICENSE README.md "build/${PKG}/"
+cp info.json control.lua changelog.txt thumbnail.png LICENSE README.md "build/${PKG}/"
 
 (cd build && zip -r -X "../dist/${PKG}.zip" "${PKG}")
 
