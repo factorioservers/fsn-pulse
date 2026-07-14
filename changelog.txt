@@ -1,0 +1,7 @@
+---------------------------------------------------------------------------------------------------
+Version: 1.0.0
+Date: 2026-07-14
+  Features:
+    - Initial release.
+    - Adds the /fsn-pulse command, which prints one machine-parseable status line
+      (tick, speed, paused) for achievement-safe UPS sampling over RCON.

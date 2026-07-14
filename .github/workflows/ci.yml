@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build portal zip
+        run: ./scripts/package.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fsn-pulse-zip
+          path: dist/*.zip
+
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Headless-server smoke test (RCON /fsn-pulse)
+        run: ./tests/smoke.sh
